@@ -1,0 +1,102 @@
+import numpy as np
+import pandas as pd
+import seaborn as sb
+from matplotlib import pyplot as plt
+
+Mat	Inns	Runs	Ave	SR	CATEGORY
+0	58	104	4154	41.95	51.49	TEST
+1	147	143	5238	39.68	85.25	ODI
+2	71	122	6147	53.92	58.22	TEST
+3	211	203	9779	58.20	92.12	ODI
+4	62	58	2102	48.88	136.22	T20
+...	...	...	...	...	...	...
+70	77	71	1825	37.24	124.31	T20
+71	62	105	4809	49.57	46.90	TEST
+72	25	43	1479	39.97	55.14	TEST
+73	183	177	6748	44.98	87.18	ODI
+74	84	77	2086	32.59	137.05	T20
+75 rows × 6 columns
+
+x_feature=mydata.iloc[:,0:5]
+x_feature.head()
+Mat	Inns	Runs	Ave	SR
+0	58	104	4154	41.95	51.49
+1	147	143	5238	39.68	85.25
+2	71	122	6147	53.92	58.22
+3	211	203	9779	58.20	92.12
+4	62	58	2102	48.88	136.22
+def corrWith(f1,f2,yourdata,hueVal="No"):
+    if hueVal=="No":
+         sb.lmplot(f1,f2,data=yourdata,fit_reg=False,scatter_kws={"s":200})
+         plt.title("corr plot between {} and {}".format(f1,f2))
+         plt.xlabel(f1)
+         plt.ylabel(f2)
+         plt.show()
+    else:
+         sb.lmplot(f1,f2,data=yourdata,fit_reg=False,scatter_kws={"s":200},hue=hueVal)
+         plt.title("corr plot between {} and {}".format(f1,f2))
+         plt.xlabel(f1)
+         plt.ylabel(f2)
+         plt.show()
+​
+corrWith("Inns","Runs",x_feature,hueVal="Cluster")
+C:\Users\asd\anaconda3\lib\site-packages\seaborn\_decorators.py:36: FutureWarning: Pass the following variables as keyword args: x, y. From version 0.12, the only valid positional argument will be `data`, and passing other arguments without an explicit keyword will result in an error or misinterpretation.
+  warnings.warn(
+
+xA_feature=x_feature.values
+#XA_feature
+print("Type of xA_feature {} and type of x_feature {}.format((type(XA_feature),type(x_feature))")
+Type of xA_feature {} and type of x_feature {}.format((type(XA_feature),type(x_feature))
+from sklearn.cluster import KMeans
+k=3
+k_cluster=KMeans(n_clusters=k).fit(xA_feature)
+kvalue=k_cluster.cluster_centers_
+print("value of means c1 {} c2 c3")
+value of means c1 {} c2 c3
+kvalue.tolist()
+[[136.11111111111111,
+  156.99999999999997,
+  6481.481481481482,
+  48.514074074074074,
+  73.46777777777778,
+  2.220446049250313e-16],
+ [55.44444444444444,
+  56.911111111111076,
+  1668.5333333333342,
+  31.67955555555556,
+  103.19666666666666,
+  1.0000000000000002],
+ [274.66666666666663,
+  357.33333333333337,
+  15606.333333333332,
+  47.986666666666665,
+  63.800000000000004,
+  2.0]]
+colname=x_feature.columns.tolist()
+pd.DataFrame([kvalue[0].tolist(),kvalue[1].tolist(),
+             kvalue[2].tolist()],columns=colname)
+Mat	Inns	Runs	Ave	SR	Cluster
+0	136.111111	157.000000	6481.481481	48.514074	73.467778	2.220446e-16
+1	55.444444	56.911111	1668.533333	31.679556	103.196667	1.000000e+00
+2	274.666667	357.333333	15606.333333	47.986667	63.800000	2.000000e+00
+x_feature["Cluster"]=k_Cluster.labels_
+x_feature.head(1)
+Mat	Inns	Runs	Ave	SR	Cluster
+0	58	104	4154	41.95	51.49	0
+k=range(1,10)
+​
+wssErrorlist=[]
+for i in k:
+    kmeancluster=KMeans(n_clusters=i)
+    kmeancluster=kmeancluster.fit(xA_feature)
+    wssError=kmeancluster.inertia_
+    wssErrorlist.append(wssError)
+    #print("Number of cluster is {} and was is {}".format(i,wssError))
+    
+plt.plot(k,wssErrorlist,'bx-')
+plt.xlabel("k value")
+plt.ylabel("sum of with in cluster error")
+plt.title("elow mathed for fimding numner")
+plt.show()
+
+    
